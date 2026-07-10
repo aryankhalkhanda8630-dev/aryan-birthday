@@ -366,8 +366,8 @@
     <!-- PAGE 5: PRE-SHAYARI PHOTO PAGE -->
     <div class="screen hidden" id="page-5">
         <div class="photo-frame">
-            <!-- 9th Photo Goes Here -->
-            <img src="photo_pre_shayari.jpg" alt="Pre Shayari Precious Moment">
+            <!-- 9th Photo Goes Here (Lehenga) -->
+            <img src="file_00000000b5387209a7235b16fdaa03d4.png" alt="Pre Shayari Precious Moment">
         </div>
         <button class="btn-next" onclick="navigatePage(5, 6)">Read Special Note ❤️</button>
     </div>
@@ -393,17 +393,25 @@
     <!-- PAGE 7: FINAL PHOTO PAGE -->
     <div class="screen hidden" id="page-7">
         <div class="photo-frame">
-            <!-- 10th Photo Goes Here -->
-            <img src="photo_post_shayari.jpg" alt="Final Delightful Moment">
+            <!-- 10th Photo Goes Here (Sunset/Doodle) -->
+            <img src="TempDragFile_20260501_083700.png" alt="Final Delightful Moment">
         </div>
         <h2 style="color: #d63384; margin-top: 20px; font-weight: 700;">Hamesha haste raho! 🌟</h2>
     </div>
 
     <script>
-        // --- 1. Dynamic Floating Balloons with Images Setup ---
-        // Provide paths to your first 8 images here
-        const balloonImages = ['b1.jpg', 'b2.jpg', 'b3.jpg', 'b4.jpg', 'b5.jpg', 'b6.jpg', 'b7.jpg', 'b8.jpg'];
-        const balloonColors = ['#ff7fa7', '#7ee8fa', '#fff176', '#bc85a3', '#96fbc4', '#ffb347', '#b39ddb', '#a3e4d7'];
+        // --- 1. Dynamic Floating Balloons with Real Images ---
+        // Exactly matching your folder list (case-sensitive filenames fixed)
+        const balloonImages = [
+            'Screenshot 2026-07-10 222148.png',
+            'Screenshot 2026-07-10 222207.png',
+            'Screenshot_20260618_235755.jpg',
+            'WhatsApp Image 2026-07-10 at 10.15.12 PM (1).jpeg',
+            'WhatsApp Image 2026-07-10 at 10.15.12 PM (2).jpeg',
+            'WhatsApp Image 2026-07-10 at 10.15.13 PM (1).jpeg',
+            'WhatsApp Image 2026-07-10 at 10.15.13 PM.jpeg'
+        ];
+        const balloonColors = ['#ff7fa7', '#7ee8fa', '#fff176', '#bc85a3', '#96fbc4', '#ffb347', '#b39ddb'];
         const balloonBox = document.getElementById('balloon-box');
 
         function generateBalloons() {
@@ -411,26 +419,19 @@
                 const balloon = document.createElement('div');
                 balloon.className = 'balloon';
                 
-                // Random layouts
-                let leftPosition = (index * 12) + Math.random() * 5;
+                let leftPosition = (index * 13) + Math.random() * 3;
                 balloon.style.left = `${leftPosition}%`;
                 balloon.style.backgroundColor = balloonColors[index % balloonColors.length];
                 
-                // Varied floating delays
-                let delay = Math.random() * 2;
-                let duration = 6 + Math.random() * 4;
+                let delay = Math.random() * 1.5;
+                let duration = 7 + Math.random() * 3;
                 balloon.style.animationDelay = `${delay}s`;
                 balloon.style.animationDuration = `${duration}s`;
 
-                // Wrapper for fitting images beautifully inside balloons
                 const imgWrap = document.createElement('div');
                 imgWrap.className = 'balloon-img-wrap';
                 const img = document.createElement('img');
                 img.src = imgSrc;
-                img.onerror = function() {
-                    // Fallback background icon if image path doesn't load
-                    imgWrap.innerHTML = "<span style='display:block;text-align:center;margin-top:12px;color:white;'>❤️</span>";
-                };
                 
                 imgWrap.appendChild(img);
                 balloon.appendChild(imgWrap);
@@ -453,7 +454,6 @@
             }
         }, 1000);
 
-        // Navigation core
         function navigatePage(current, next) {
             document.getElementById(`page-${current}`).classList.add('hidden');
             document.getElementById(`page-${next}`).classList.remove('hidden');
@@ -494,7 +494,6 @@
             cakeInstruction.innerText = "Cut the Cake! 🔪";
             cakeHintText.innerText = "👉 Ab Cake ke upar click karke use slice karo!";
             
-            // Activate beautiful custom knife behavior
             document.body.addEventListener('mousemove', followKnifeMouse);
             document.body.addEventListener('touchmove', followKnifeTouch);
             knifeElement.style.display = 'block';
@@ -518,11 +517,9 @@
             knifeElement.style.display = 'none';
             cakeHintText.innerText = "Perfect! ❤️ Party Time!";
             
-            // Stop listeners safely
             document.body.removeEventListener('mousemove', followKnifeMouse);
             document.body.removeEventListener('touchmove', followKnifeTouch);
 
-            // Confetti explosion loop
             let duration = 2.5 * 1000;
             let animationEnd = Date.now() + duration;
             (function loop() {
@@ -531,14 +528,12 @@
                 if (Date.now() < animationEnd) { requestAnimationFrame(loop); }
             }());
 
-            // Transition to Pre-Shayari page after execution
             setTimeout(() => {
                 navigatePage(4, 5);
             }, 2000);
         }
         
         function initCakeScreen() {
-            // Reset adjustments if needed
             burningFlames = 2;
         }
     </script>
