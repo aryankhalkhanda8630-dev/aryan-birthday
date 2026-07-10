@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Bestie! ✨</title>
+    <!-- Canvas Confetti for amazing party blasts -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #ffeef8 0%, #daeaff 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        /* Master Screen Controller */
+        .screen {
+            position: absolute;
+            width: 100%;
+            max-width: 460px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 25px;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            z-index: 5;
+        }
+        .hidden {
+            display: none !important;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Common Elegant Components */
+        .btn-next {
+            background: linear-gradient(45deg, #ff4a85, #ff7ba4);
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 74, 133, 0.3);
+            margin-top: 25px;
+            transition: all 0.3s ease;
+        }
+        .btn-next:hover {
+            transform: scale(1.05);
+        }
+        .photo-frame {
+            width: 90%;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            border: 6px solid #fff;
+            background: #fff;
+            animation: floatAnim 4s ease-in-out infinite;
+        }
+        .photo-frame img {
+            width: 100%;
+            max-height: 420px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* --- PAGE 1: BALLOONS & COUNTDOWN --- */
+        #countdown-num {
+            font-size: 110px;
+            font-weight: 800;
+            color: #ff4a85;
+            text-shadow: 3px 6px 12px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        .balloon-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .balloon {
+            position: absolute;
+            bottom: -150px;
+            width: 75px;
+            height: 90px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.08);
+            animation: floatUp linear infinite;
+        }
+        .balloon::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 34px;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 8px solid rgba(0,0,0,0.1);
+        }
+        .balloon-img-wrap {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 10px auto 0;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .balloon-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- PAGE 2: MAIN WISH INFO --- */
+        .wish-heading {
+            font-size: 32px;
+            color: #d63384;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        .meta-info {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin: 10px 0;
+            font-size: 18px;
+            color: #4a4a4a;
+            font-weight: 500;
+        }
+        .meta-info span { color: #ff4a85; font-weight: bold; }
+
+        /* --- PAGE 3: POPUP QUESTION --- */
+        .choice-box {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            width: 85%;
+        }
+        .choice-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 25px;
+            position: relative;
+            height: 50px;
+        }
+        .btn-choice {
+            padding: 10px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-yes { background-color: #2ecc71; color: white; }
+        .btn-no { background-color: #e74c3c; color: white; position: absolute; right: 25px; }
+
+        /* --- PAGE 4: 3-LAYER CAKE & INTERACTION --- */
+        .cake-area {
+            position: relative;
+            width: 240px;
+            height: 280px;
+            margin-top: 20px;
+        }
+        .cake-3layer {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .layer {
+            border-radius: 12px 12px 4px 4px;
+            box-shadow: inset 0 6px 0 rgba(255,255,255,0.4), 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .layer-bottom { width: 200px; height: 65px; background: #8d5338; z-index: 1; }
+        .layer-middle { width: 160px; height: 55px; background: #f194b8; z-index: 2; margin-bottom: -5px; }
+        .layer-top { width: 120px; height: 45px; background: #fff176; z-index: 3; margin-bottom: -5px; }
+        
+        /* Cream Drips */
+        .layer::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 0 0 10px 10px;
+        }
+
+        .candles-box {
+            position: absolute;
+            top: 85px;
+            width: 70px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 10;
+        }
+        .candle-real {
+            width: 10px;
+            height: 35px;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
+        }
+        .candle-real:nth-child(2) {
+            background: linear-gradient(to right, #f857a6, #ff5858);
+        }
+        .flame-real {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 15px;
+            background: #ff9800;
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 10px #ffeb3b;
+            animation: flicker 0.15s infinite alternate;
+        }
+        .flame-real.blown { display: none; }
+
+        /* Knife Design */
+        .fancy-knife {
+            position: absolute;
+            width: 55px;
+            height: 18px;
+            background: linear-gradient(180deg, #e0e0e0, #bdc3c7);
+            border-top-right-radius: 12px;
+            pointer-events: none;
+            z-index: 100;
+            transform: rotate(-25deg);
+            display: none;
+            box-shadow: 2px 4px 6px rgba(0,0,0,0.15);
+        }
+        .fancy-knife::before {
+            content: '';
+            position: absolute;
+            left: -18px;
+            top: 2px;
+            width: 18px;
+            height: 14px;
+            background: #e67e22;
+            border-radius: 4px 0 0 4px;
+        }
+
+        /* Line where cake cuts */
+        .cake-3layer.cut-done .layer::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            width: 4px;
+            height: 100%;
+            background: rgba(0,0,0,0.15);
+            transform: translateX(-50%);
+        }
+
+        /* --- PAGE 6: SHAYARI BOX --- */
+        .shayari-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px 24px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(214, 51, 132, 0.1);
+            border-left: 6px solid #ff4a85;
+            border-right: 6px solid #ff4a85;
+            width: 90%;
+            line-height: 1.8;
+        }
+        .shayari-text {
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+            white-space: pre-line;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.02);
+        }
+
+        /* ANIMATIONS */
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(20deg); opacity: 0; }
+        }
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); }
+            100% { transform: translateX(-50%) scale(1.1) rotate(3deg); }
+        }
+        @keyframes floatAnim {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Knife Pointer Asset -->
+    <div class="fancy-knife" id="app-knife"></div>
+
+    <!-- PAGE 1: COUNTDOWN & FLOATING BALLOONS WITH IMAGES -->
+    <div class="screen" id="page-1">
+        <div class="balloon-container" id="balloon-box"></div>
+        <div id="countdown-num">5</div>
+        <p style="color: #ff4a85; font-weight: 600; margin-top: 10px; z-index: 10;">Get ready for the magic... ✨</p>
+    </div>
+
+    <!-- PAGE 2: HAPPY BIRTHDAY BESTIE INFO -->
+    <div class="screen hidden" id="page-2">
+        <h1 class="wish-heading">🎉 Happy Birthday Bestie! 🥳</h1>
+        <div class="meta-info">📅 Date: <span>22 July 2007</span></div>
+        <div class="meta-info">⏰ Time: <span>8:00 AM</span></div>
+        <button class="btn-next" onclick="navigatePage(2, 3)">Next ✨</button>
+    </div>
+
+    <!-- PAGE 3: CAKE CUTTING PROMPT -->
+    <div class="screen hidden" id="page-3">
+        <div class="choice-box">
+            <h2 style="color: #d63384; margin-bottom: 10px;">Ready to celebrate? 🤔</h2>
+            <p style="color: #666; font-weight: 500;">Cake cutting process start karein?</p>
+            <div class="choice-buttons">
+                <button class="btn-choice btn-yes" onclick="navigatePage(3, 4); initCakeScreen();">Yes 😍</button>
+                <button class="btn-choice btn-no" id="escape-no-btn">No 😢</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 4: 3-LAYER INTERACTIVE CAKE -->
+    <div class="screen hidden" id="page-4">
+        <h2 class="wish-heading" id="cake-instruction">Blow the Candles! 🕯️</h2>
+        <div class="cake-area" id="interactive-cake-zone">
+            <div class="candles-box">
+                <div class="candle-real" onclick="blowCandle(this)"><div class="flame-real"></div></div>
+                <div class="candle-real" onclick="blowCandle(this)"><div class="flame-real"></div></div>
+            </div>
+            <div class="cake-3layer" id="grand-cake">
+                <div class="layer layer-top"></div>
+                <div class="layer layer-middle"></div>
+                <div class="layer layer-bottom"></div>
+            </div>
+        </div>
+        <p style="margin-top: 20px; font-weight: 600; color: #666;" id="cake-hint-text">👉 Dono Candles par click karke unhe bujhao!</p>
+    </div>
+
+    <!-- PAGE 5: PRE-SHAYARI PHOTO PAGE -->
+    <div class="screen hidden" id="page-5">
+        <div class="photo-frame">
+            <!-- 9th Photo Goes Here -->
+            <img src="photo_pre_shayari.jpg" alt="Pre Shayari Precious Moment">
+        </div>
+        <button class="btn-next" onclick="navigatePage(5, 6)">Read Special Note ❤️</button>
+    </div>
+
+    <!-- PAGE 6: THE SHAYARI PAGE -->
+    <div class="screen hidden" id="page-6">
+        <div class="shayari-card">
+            <p class="shayari-text">
+                Lagta hai aaj ke din Bhagwan ne fursat se ek bahut hi khoobsurat insaan banaya hoga. 🤍
+
+                Phir usme pyaari si muskaan, saaf dil aur duniya se bilkul alag ek khoobsurat shaksiyat bhar di hogi. 🌸
+
+                Tabhi to aaj ka din itna khaas hai... ❤️
+
+                🎂 Happy Birthday...
+
+                Bhagwan kare teri zindagi hamesha khushiyon, duaon aur muskurahaton se bhari rahe. ✨
+            </p>
+        </div>
+        <button class="btn-next" onclick="navigatePage(6, 7)">One Last Surprise 🎁</button>
+    </div>
+
+    <!-- PAGE 7: FINAL PHOTO PAGE -->
+    <div class="screen hidden" id="page-7">
+        <div class="photo-frame">
+            <!-- 10th Photo Goes Here -->
+            <img src="photo_post_shayari.jpg" alt="Final Delightful Moment">
+        </div>
+        <h2 style="color: #d63384; margin-top: 20px; font-weight: 700;">Hamesha haste raho! 🌟</h2>
+    </div>
+
+    <script>
+        // --- 1. Dynamic Floating Balloons with Images Setup ---
+        // Provide paths to your first 8 images here
+        const balloonImages = ['b1.jpg', 'b2.jpg', 'b3.jpg', 'b4.jpg', 'b5.jpg', 'b6.jpg', 'b7.jpg', 'b8.jpg'];
+        const balloonColors = ['#ff7fa7', '#7ee8fa', '#fff176', '#bc85a3', '#96fbc4', '#ffb347', '#b39ddb', '#a3e4d7'];
+        const balloonBox = document.getElementById('balloon-box');
+
+        function generateBalloons() {
+            balloonImages.forEach((imgSrc, index) => {
+                const balloon = document.createElement('div');
+                balloon.className = 'balloon';
+                
+                // Random layouts
+                let leftPosition = (index * 12) + Math.random() * 5;
+                balloon.style.left = `${leftPosition}%`;
+                balloon.style.backgroundColor = balloonColors[index % balloonColors.length];
+                
+                // Varied floating delays
+                let delay = Math.random() * 2;
+                let duration = 6 + Math.random() * 4;
+                balloon.style.animationDelay = `${delay}s`;
+                balloon.style.animationDuration = `${duration}s`;
+
+                // Wrapper for fitting images beautifully inside balloons
+                const imgWrap = document.createElement('div');
+                imgWrap.className = 'balloon-img-wrap';
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.onerror = function() {
+                    // Fallback background icon if image path doesn't load
+                    imgWrap.innerHTML = "<span style='display:block;text-align:center;margin-top:12px;color:white;'>❤️</span>";
+                };
+                
+                imgWrap.appendChild(img);
+                balloon.appendChild(imgWrap);
+                balloonBox.appendChild(balloon);
+            });
+        }
+        generateBalloons();
+
+        // --- 2. Countdown Engine ---
+        let count = 5;
+        const countdownElement = document.getElementById('countdown-num');
+        const countdownInterval = setInterval(() => {
+            count--;
+            if (count > 0) {
+                countdownElement.innerText = count;
+            } else {
+                clearInterval(countdownInterval);
+                confetti({ particleCount: 80, spread: 60 });
+                navigatePage(1, 2);
+            }
+        }, 1000);
+
+        // Navigation core
+        function navigatePage(current, next) {
+            document.getElementById(`page-${current}`).classList.add('hidden');
+            document.getElementById(`page-${next}`).classList.remove('hidden');
+        }
+
+        // --- 3. Runaway 'No' Button Logic (Page 3) ---
+        const noBtn = document.getElementById('escape-no-btn');
+        noBtn.addEventListener('mouseenter', runawayButton);
+        noBtn.addEventListener('touchstart', runawayButton);
+
+        function runawayButton() {
+            const randomX = Math.random() * 140 - 70;
+            const randomY = Math.random() * 140 - 70;
+            noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+        }
+
+        // --- 4. Interactive Cake System (Page 4) ---
+        let burningFlames = 2;
+        const knifeElement = document.getElementById('app-knife');
+        const cakeZone = document.getElementById('interactive-cake-zone');
+        const grandCake = document.getElementById('grand-cake');
+        const cakeInstruction = document.getElementById('cake-instruction');
+        const cakeHintText = document.getElementById('cake-hint-text');
+
+        function blowCandle(candle) {
+            const flame = candle.querySelector('.flame-real');
+            if (flame && !flame.classList.contains('blown')) {
+                flame.classList.add('blown');
+                burningFlames--;
+                
+                if (burningFlames === 0) {
+                    readyToCutMode();
+                }
+            }
+        }
+
+        function readyToCutMode() {
+            cakeInstruction.innerText = "Cut the Cake! 🔪";
+            cakeHintText.innerText = "👉 Ab Cake ke upar click karke use slice karo!";
+            
+            // Activate beautiful custom knife behavior
+            document.body.addEventListener('mousemove', followKnifeMouse);
+            document.body.addEventListener('touchmove', followKnifeTouch);
+            knifeElement.style.display = 'block';
+
+            cakeZone.style.cursor = 'none';
+            cakeZone.setAttribute('onclick', 'executeCakeCut()');
+        }
+
+        function followKnifeMouse(e) {
+            knifeElement.style.left = (e.clientX + 12) + 'px';
+            knifeElement.style.top = (e.clientY - 12) + 'px';
+        }
+        function followKnifeTouch(e) {
+            let touch = e.touches[0];
+            knifeElement.style.left = (touch.clientX + 12) + 'px';
+            knifeElement.style.top = (touch.clientY - 12) + 'px';
+        }
+
+        function executeCakeCut() {
+            grandCake.classList.add('cut-done');
+            knifeElement.style.display = 'none';
+            cakeHintText.innerText = "Perfect! ❤️ Party Time!";
+            
+            // Stop listeners safely
+            document.body.removeEventListener('mousemove', followKnifeMouse);
+            document.body.removeEventListener('touchmove', followKnifeTouch);
+
+            // Confetti explosion loop
+            let duration = 2.5 * 1000;
+            let animationEnd = Date.now() + duration;
+            (function loop() {
+                confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0 } });
+                confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1 } });
+                if (Date.now() < animationEnd) { requestAnimationFrame(loop); }
+            }());
+
+            // Transition to Pre-Shayari page after execution
+            setTimeout(() => {
+                navigatePage(4, 5);
+            }, 2000);
+        }
+        
+        function initCakeScreen() {
+            // Reset adjustments if needed
+            burningFlames = 2;
+        }
+    </script>
+</body>
+</html>
